@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
 
 list( APPEND CMAKE_MODULE_PATH ${CDT_BIN} )
+
+include( CDTWasmToolchain )
 include( CDTMacros )
 
 macro(add_cdt_unit_test TEST_NAME)

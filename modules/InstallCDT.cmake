@@ -1,17 +1,27 @@
+set(EXE ${CMAKE_EXECUTABLE_SUFFIX})
+
 add_custom_command( TARGET CDTClang POST_BUILD COMMAND mkdir -p ${CMAKE_BINARY_DIR}/bin )
 macro( cdt_clang_install file )
+   set(BINARY_DIR ${CMAKE_BINARY_DIR}/cdt-llvm/bin)
+   add_custom_command( TARGET CDTClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${BINARY_DIR}/${file}${EXE} ${CMAKE_BINARY_DIR}/bin/ )
+   install(FILES ${BINARY_DIR}/${file}${EXE}
+      DESTINATION ${CDT_INSTALL_PREFIX}/bin
+      PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+endmacro( cdt_clang_install )
+
+macro( cdt_clang_install_dll file )
    set(BINARY_DIR ${CMAKE_BINARY_DIR}/cdt-llvm/bin)
    add_custom_command( TARGET CDTClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${BINARY_DIR}/${file} ${CMAKE_BINARY_DIR}/bin/ )
    install(FILES ${BINARY_DIR}/${file}
       DESTINATION ${CDT_INSTALL_PREFIX}/bin
       PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
-endmacro( cdt_clang_install )
+endmacro( cdt_clang_install_dll )
 
 macro( cdt_clang_install_and_symlink file symlink )
    set(BINARY_DIR ${CMAKE_BINARY_DIR}/cdt-llvm/bin)
-   add_custom_command( TARGET CDTClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${BINARY_DIR}/${file} ${CMAKE_BINARY_DIR}/bin/ )
-   add_custom_command( TARGET CDTClang POST_BUILD COMMAND cd ${CMAKE_BINARY_DIR}/bin && ln -sf ${file} ${symlink} )
-   install(FILES ${BINARY_DIR}/${file}
+   add_custom_command( TARGET CDTClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${BINARY_DIR}/${file}${EXE} ${CMAKE_BINARY_DIR}/bin/ )
+   add_custom_command( TARGET CDTClang POST_BUILD COMMAND cd ${CMAKE_BINARY_DIR}/bin && ln -sf ${file}${EXE} ${symlink} )
+   install(FILES ${BINARY_DIR}/${file}${EXE}
       DESTINATION ${CDT_INSTALL_PREFIX}/bin
       PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
    install(CODE "execute_process( COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_INSTALL_PREFIX}/bin)")
@@ -20,16 +30,16 @@ endmacro( cdt_clang_install_and_symlink )
 
 macro( cdt_tool_install file )
    set(BINARY_DIR ${CMAKE_BINARY_DIR}/tools/bin)
-   add_custom_command( TARGET CDTTools POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${BINARY_DIR}/${file} ${CMAKE_BINARY_DIR}/bin/ )
-   install(FILES ${BINARY_DIR}/${file}
+   add_custom_command( TARGET CDTTools POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${BINARY_DIR}/${file}${EXE} ${CMAKE_BINARY_DIR}/bin/ )
+   install(FILES ${BINARY_DIR}/${file}${EXE}
       DESTINATION ${CDT_INSTALL_PREFIX}/bin
       PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 endmacro( cdt_tool_install )
 
 macro( cdt_tool_install_and_symlink file symlink )
    set(BINARY_DIR ${CMAKE_BINARY_DIR}/tools/bin)
-   add_custom_command( TARGET CDTTools POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${BINARY_DIR}/${file} ${CMAKE_BINARY_DIR}/bin/ )
-   install(FILES ${BINARY_DIR}/${file}
+   add_custom_command( TARGET CDTTools POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${BINARY_DIR}/${file}${EXE} ${CMAKE_BINARY_DIR}/bin/ )
+   install(FILES ${BINARY_DIR}/${file}${EXE}
       DESTINATION ${CDT_INSTALL_PREFIX}/bin
       PERMISSIONS OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
    install(CODE "execute_process( COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_INSTALL_PREFIX}/bin)")
@@ -63,7 +73,13 @@ cdt_clang_install(llc)
 cdt_clang_install(lld)
 cdt_clang_install(ld.lld)
 cdt_clang_install(ld64.lld)
+
+if (WIN32)
+add_custom_command( TARGET CDTClang POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/cdt-llvm/bin/clang${EXE} ${CMAKE_BINARY_DIR}/cdt-llvm/bin/clang-9${EXE} )
+endif()
+
 cdt_clang_install(clang-9)
+
 cdt_clang_install(wasm-ld)
 
 cdt_tool_install_and_symlink(eosio-pp cdt-pp)
@@ -75,8 +91,10 @@ cdt_tool_install_and_symlink(cdt-ld cdt-ld)
 cdt_tool_install_and_symlink(cdt-abidiff cdt-abidiff)
 cdt_tool_install_and_symlink(cdt-init cdt-init)
 
-cdt_clang_install(../lib/LLVMEosioApply${CMAKE_SHARED_LIBRARY_SUFFIX})
-cdt_clang_install(../lib/LLVMEosioSoftfloat${CMAKE_SHARED_LIBRARY_SUFFIX})
+if (NOT WIN32)
+   cdt_clang_install(../lib/LLVMEosioApply${CMAKE_SHARED_LIBRARY_SUFFIX})
+   cdt_clang_install(../lib/LLVMEosioSoftfloat${CMAKE_SHARED_LIBRARY_SUFFIX})
+endif()
 
 cdt_cmake_install_and_symlink(cdt-config.cmake cdt-config.cmake)
 cdt_cmake_install_and_symlink(CDTWasmToolchain.cmake CDTWasmToolchain.cmake)

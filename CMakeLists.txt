@@ -92,7 +92,9 @@ configure_file(${CMAKE_SOURCE_DIR}/tools/external/wabt/LICENSE ${CMAKE_BINARY_DI
 configure_file(${CMAKE_SOURCE_DIR}/tools/jsoncons/LICENSE ${CMAKE_BINARY_DIR}/licenses/jsoncons.license COPYONLY)
 configure_file(${CMAKE_SOURCE_DIR}/LICENSE ${CMAKE_BINARY_DIR}/licenses/cdt.license COPYONLY)
 
+if ( ENABLE_NATIVE_COMPILER )
 include(modules/TestsExternalProject.txt)
+endif()
 
 include(CTest)
 enable_testing()

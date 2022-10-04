@@ -218,7 +218,7 @@ struct generation_utils {
             llvm::sys::fs::openFileForRead(res+"/"+fname, fd);
             llvm::sys::fs::status(fd, stat);
             llvm::ErrorOr<std::unique_ptr<llvm::MemoryBuffer>> mb =
-               llvm::MemoryBuffer::getOpenFile(fd, fname, stat.getSize());
+               llvm::MemoryBuffer::getOpenFile(llvm::sys::fs::convertFDToNativeFile(fd), fname, stat.getSize());
             if (mb)
                return mb.get()->getBuffer().str();
          }

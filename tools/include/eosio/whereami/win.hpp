@@ -7,10 +7,8 @@
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
-#endif
 
-template <uint8_t OS>
-int _getModulePath(HMODULE module, char* out, int capacity, int* dirname_length, typename std::enable_if<OS == sys::_win, int>::type = 0) {
+int __getModulePath(HMODULE module, char* out, int capacity, int* dirname_length) {
    wchar_t buffer1[MAX_PATH];
    wchar_t buffer2[MAX_PATH];
    wchar_t* path = NULL;
@@ -84,26 +82,25 @@ int _getModulePath(HMODULE module, char* out, int capacity, int* dirname_length,
 
 template <uint8_t OS>
 int _getExecutablePath(char* out, int capacity, int* dirname_length, typename std::enable_if<OS == sys::_win, int>::type = 0) {
-   return _getModulePath(NULL, out, capacity, dirname_length);
+   return __getModulePath(NULL, out, capacity, dirname_length);
 }
 
 template <uint8_t OS>
-int _getModulePath(char* out, int capacity, int* dirname_length, typename std::enable_if<OS == sys::windows, int>::type = 0) {
-   HMODULE module;
+int _getModulePath(char* out, int capacity, int* dirname_length, typename std::enable_if<OS == sys::_win, int>::type = 0) {
+   HMODULE module = NULL;
    int length = -1;
 
 #if defined(_MSC_VER)
 #pragma warning(push)
 #pragma warning(disable: 4054)
 #endif
-   if (GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, (LPCTSTR)WAI_RETURN_ADDRESS(), &module))
+   if (GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, (LPCTSTR)0, &module))
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
    {
-     length = getModulePath(module, out, capacity, dirname_length);
+     length = __getModulePath(module, out, capacity, dirname_length);
    }
 
    return length;
    }
-}

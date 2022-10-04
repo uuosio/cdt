@@ -439,6 +439,7 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
       copts.emplace_back("-DBOOST_DISABLE_ASSERTS");
       copts.emplace_back("-DBOOST_EXCEPTION_DISABLE");
       copts.emplace_back("-U__APPLE__");
+      #ifndef _WIN32
       if (!fnative_opt) {
          copts.emplace_back("-Xclang");
          copts.emplace_back("-load");
@@ -448,6 +449,7 @@ static void GetCompDefaults(std::vector<std::string>& copts) {
          else if (llvm::sys::fs::exists(eosio::cdt::whereami::where()+"/../lib/LLVMEosioApply"+eosio_apply_suff))
             copts.emplace_back(eosio::cdt::whereami::where()+"/../lib/LLVMEosioApply"+eosio_apply_suff);
       }
+      #endif
       if (false && fnative_opt) {
          copts.emplace_back("-Xclang");
          copts.emplace_back("-load");
@@ -598,6 +600,7 @@ static Options CreateOptions(bool add_defaults=true) {
    else
       pp_dir = eosio::cdt::whereami::where();
 
+   #ifndef _WIN32
    if (!fno_cfl_aa_opt) {
       copts.emplace_back("-mllvm");
       copts.emplace_back("-use-cfl-aa-in-codegen=both");
@@ -610,6 +613,7 @@ static Options CreateOptions(bool add_defaults=true) {
       ldopts.emplace_back("-fno-cfl-aa");
 #endif
    }
+   #endif
    for ( auto input_filename : input_filename_opt ) {
 #ifdef ONLY_LD
       ldopts.push_back(input_filename);
