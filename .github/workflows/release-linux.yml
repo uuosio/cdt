@@ -34,3 +34,10 @@ jobs:
           cd build
           cmake -DENABLE_NATIVE_COMPILER=OFF ..
           make -j $(nproc)
+          ./packages/generate_release.sh release-linux
+      - name: release-cdt
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            ./build/release-linux.tar.gz

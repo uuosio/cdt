@@ -21,11 +21,18 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 0
-      - name: Setup upterm session
-        uses: lhotari/action-upterm@v1
+      # - name: Setup upterm session
+      #   uses: lhotari/action-upterm@v1
       - name: Build cdt
         run: |
           mkdir build
           cd build
           cmake -DENABLE_NATIVE_COMPILER=OFF ..
           make -j $(sysctl -n hw.ncpu)
+          ./packages/generate_release.sh release-macos
+      - name: release-cdt
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            ./build/release-macos.tar.gz

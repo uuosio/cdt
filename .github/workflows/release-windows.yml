@@ -39,3 +39,10 @@ jobs:
           cd build
           cmake -G"Unix Makefiles" -DENABLE_NATIVE_COMPILER=OFF ..
           make -j $(nproc)
+          ./packages/generate_release.sh release-windows
+      - name: release-cdt
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            ./build/release-windows.tar.gz
