@@ -1,0 +1,36 @@
+name: build cdt on linux
+
+on:
+  push:
+    branches: [ debug ]
+    tags:
+      - "v*.*.*"
+  # pull_request:
+  #   branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run:
+    runs-on: ubuntu-20.04
+    # container:
+    #   image: quay.io/pypa/manylinux2014_x86_64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          fetch-depth: 0
+      - name: install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install build-essential clang cmake git libxml2-dev opam ocaml-interp python3 python3-pip time
+          python3 -m pip install pygments
+      - name: Build cdt
+        run: |
+          mkdir build
+          cd build
+          cmake -DENABLE_NATIVE_COMPILER=OFF ..
+          make -j $(nproc)

@@ -1,0 +1,41 @@
+name: build cdt on windows
+
+on:
+  push:
+    branches: [ debug ]
+    tags:
+      - "v*.*.*"
+  # pull_request:
+  #   branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          fetch-depth: 0
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: CLANG64
+      - name: Checkout
+        shell: msys2 {0}
+        run: |
+          pacman --noconfirm -S cmake git
+          pacman --noconfirm -S --needed base-devel mingw-w64-clang-x86_64-clang
+          pacman --noconfirm -S mingw-w64-clang-x86_64-gdb mingw-w64-clang-x86_64-compiler-rt
+          pacman --noconfirm -S mingw-w64-clang-x86_64-boost
+          pacman --noconfirm -S mingw-w64-clang-x86_64-cmake
+      - name: Build cdt
+        shell: msys2 {0}
+        run: |
+          mkdir build
+          cd build
+          cmake -G"Unix Makefiles" -DENABLE_NATIVE_COMPILER=OFF ..
+          make -j $(nproc)

@@ -1,0 +1,31 @@
+name: build cdt on macos
+
+on:
+  push:
+    branches: [ debug ]
+    tags:
+      - "v*.*.*"
+  # pull_request:
+  #   branches: [ main ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run:
+    runs-on: macos-12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          fetch-depth: 0
+      - name: Setup upterm session
+        uses: lhotari/action-upterm@v1
+      - name: Build cdt
+        run: |
+          mkdir build
+          cd build
+          cmake -DENABLE_NATIVE_COMPILER=OFF ..
+          make -j $(sysctl -n hw.ncpu)
