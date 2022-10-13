@@ -34,6 +34,9 @@ jobs:
           cd build
           cmake -DENABLE_NATIVE_COMPILER=OFF ..
           make -j $(nproc)
+      - name: generate release tarball
+        run: |
+          cd build
           ./packages/generate_release.sh release-linux
       - name: release-cdt
         uses: softprops/action-gh-release@v1

@@ -47,6 +47,7 @@ jobs:
       - name: generate release tarball
         shell: msys2 {0}
         run: |
+          cd build
           ./packages/generate_release.sh release-windows
       - name: release-cdt
         uses: softprops/action-gh-release@v1

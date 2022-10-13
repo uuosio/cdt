@@ -29,6 +29,9 @@ jobs:
           cd build
           cmake -DENABLE_NATIVE_COMPILER=OFF ..
           make -j $(sysctl -n hw.ncpu)
+      - name: generate release tarball
+        run: |
+          cd build
           ./packages/generate_release.sh release-macos
       - name: release-cdt
         uses: softprops/action-gh-release@v1
