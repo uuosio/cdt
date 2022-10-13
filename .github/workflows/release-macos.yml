@@ -2,7 +2,6 @@ name: build cdt on macos
 
 on:
   push:
-    branches: [ debug ]
     tags:
       - "v*.*.*"
   # pull_request:
