@@ -39,6 +39,13 @@ jobs:
           cd build
           cmake -G"Unix Makefiles" -DENABLE_NATIVE_COMPILER=OFF ..
           make -j $(nproc)
+      - shell: copy dll dependencies
+        run: |
+          msys2 -c 'cp /clang64/bin/libc++.dll ./build/bin/libc++.dll'
+          msys2 -c 'ls  /clang64/bin/libunwind.dll ./build/bin/libunwind.dll'
+      - name: generate release tarball
+        shell: msys2 {0}
+        run: |
           ./packages/generate_release.sh release-windows
       - name: release-cdt
         uses: softprops/action-gh-release@v1
