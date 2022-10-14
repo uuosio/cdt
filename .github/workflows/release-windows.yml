@@ -37,6 +37,7 @@ jobs:
         run: |
           mkdir build
           cd build
+          export PATH=$PATH:$(pwd)/bin
           cmake -G"Unix Makefiles" -DENABLE_NATIVE_COMPILER=OFF ..
           make -j $(nproc)
       - name: copy dll dependencies
