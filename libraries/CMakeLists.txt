@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.5)
 project(cdt_libraries)
 
 list(APPEND CMAKE_MODULE_PATH ${CDT_BIN})
-include(CDTWasmToolchain)
 include(CDTMacros)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O3 -Wall")

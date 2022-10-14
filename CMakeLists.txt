@@ -47,17 +47,24 @@ set(WASM_SDK_BUILD true)
 ### Configure the CDTWasmToolchain.cmakes
 set(CDT_ROOT_DIR ${CMAKE_BINARY_DIR})
 
+if (WIN32)
+   set(CDT_BIN_DIR "")
+else()
+   set(CDT_BIN_DIR ${CMAKE_BINARY_DIR}/bin/)
+endif()
+
 configure_file(${CMAKE_SOURCE_DIR}/modules/cdt-config.cmake ${CMAKE_BINARY_DIR}/lib/cmake/cdt/cdt-config.cmake @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/modules/CDTMacros.cmake.in ${CMAKE_BINARY_DIR}/lib/cmake/cdt/CDTMacros.cmake @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/modules/CDTWasmToolchain.cmake.in ${CMAKE_BINARY_DIR}/lib/cmake/cdt/CDTWasmToolchain.cmake @ONLY)
 
 set(CDT_ROOT_DIR ${CDT_INSTALL_PREFIX})
-
+set(CDT_BIN_DIR ${CDT_INSTALL_PREFIX}/bin/)
 configure_file(${CMAKE_SOURCE_DIR}/modules/cdt-config.cmake ${CMAKE_BINARY_DIR}/modules/cdt-config.cmake @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/modules/CDTMacros.cmake.in ${CMAKE_BINARY_DIR}/modules/CDTMacros.cmake @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/modules/CDTWasmToolchain.cmake.in ${CMAKE_BINARY_DIR}/modules/CDTWasmToolchain.cmake @ONLY)
 
 set(CDT_ROOT_DIR "_PREFIX_")
+set(CDT_BIN_DIR "_PREFIX_/bin/")
 configure_file(${CMAKE_SOURCE_DIR}/modules/CDTMacros.cmake.in ${CMAKE_BINARY_DIR}/modules/CDTMacrosPackage.cmake @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/modules/CDTWasmToolchain.cmake.in ${CMAKE_BINARY_DIR}/modules/CDTWasmToolchainPackage.cmake @ONLY)
 configure_file(${CMAKE_SOURCE_DIR}/modules/cdt-config.cmake ${CMAKE_BINARY_DIR}/modules/cdt-config.cmake.package @ONLY)
