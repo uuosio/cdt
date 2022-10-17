@@ -27,10 +27,11 @@ jobs:
       - name: Checkout
         shell: msys2 {0}
         run: |
-          pacman --noconfirm -S cmake git
+          pacman --noconfirm -S git
           pacman --noconfirm -S --needed base-devel mingw-w64-clang-x86_64-clang
           pacman --noconfirm -S mingw-w64-clang-x86_64-gdb mingw-w64-clang-x86_64-compiler-rt
           pacman --noconfirm -S mingw-w64-clang-x86_64-boost
+          pacman --noconfirm -S mingw-w64-clang-x86_64-cmake
           pacman --noconfirm -S mingw-w64-clang-x86_64-python
           pacman --noconfirm -S mingw-w64-clang-x86_64-python-pip
       - name: Build cdt
