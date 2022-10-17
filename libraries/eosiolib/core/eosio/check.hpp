@@ -6,6 +6,8 @@
 
 #include <string>
 #include <string_view>
+#include "native_defines.hpp"
+
 
 namespace eosio {
 
